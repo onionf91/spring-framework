@@ -17,7 +17,9 @@
 package org.springframework.web.reactive.result.view.groovy;
 
 /**
+ *
  * @author Jason Yu
+ * @since 5.0
  */
-public class GroovyMarkupConfigureTests {
+public class GroovyMarkupConfigurer {
 }

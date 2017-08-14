@@ -27,6 +27,7 @@ import java.util.Optional;
 
 import groovy.text.Template;
 import groovy.text.markup.MarkupTemplateEngine;
+import org.springframework.web.util.NestedServletException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -63,7 +64,8 @@ public class GroovyMarkupView extends AbstractUrlBasedView {
 							obtainApplicationContext(),
 							GroovyMarkupConfig.class, true, false)
 					.getTemplateEngine();
-		} catch (NoSuchBeanDefinitionException e) {
+		}
+		catch (NoSuchBeanDefinitionException e) {
 			throw new ApplicationContextException("Expected a single GroovyMarkupConfig bean in the current " +
 					"Servlet web application context or the parent root context: GroovyMarkupConfigurer is " +
 					"the usual implementation. This bean may have any name.", e);
@@ -83,7 +85,8 @@ public class GroovyMarkupView extends AbstractUrlBasedView {
 		Assert.state(this.engine != null, "No MarkupTemplateEngine set");
 		try {
 			this.engine.resolveTemplate(getUrl());
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			return false;
 		}
 		return true;
@@ -105,8 +108,19 @@ public class GroovyMarkupView extends AbstractUrlBasedView {
 			Charset charset = getCharset(contentType);
 			Writer writer = new OutputStreamWriter(dataBuffer.asOutputStream(), charset);
 			template.make(renderAttributes).writeTo(new BufferedWriter(writer));
-		} catch (IOException e) {
-		} catch (ClassNotFoundException e) {
+		}
+		catch (IOException e) {
+			String message = "Could not load Groovy template for URL : " + getUrl();
+			return Mono.error(new IllegalStateException(message, e));
+		}
+		catch (ClassNotFoundException e) {
+			Throwable cause = (e.getCause() != null ? e.getCause() : e);
+			return Mono.error(new NestedServletException(
+				"Could not find class while rendering Groovy Markup view with name '" +
+				getUrl() + "':" + e.getMessage() + "'", cause));
+		}
+		catch (Throwable e) {
+			return Mono.error(e);
 		}
 		return exchange.getResponse().writeWith(Flux.just(dataBuffer));
 	}
@@ -114,5 +128,4 @@ public class GroovyMarkupView extends AbstractUrlBasedView {
 	private Charset getCharset(@Nullable MediaType mediaType) {
 		return Optional.ofNullable(mediaType).map(MimeType::getCharset).orElse(getDefaultCharset());
 	}
-
 }

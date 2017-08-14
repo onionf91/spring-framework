@@ -16,8 +16,26 @@
 
 package org.springframework.web.reactive.result.view.groovy;
 
+import org.junit.Test;
+
+import org.springframework.beans.DirectFieldAccessor;
+
+import static org.junit.Assert.*;
+
 /**
+ * Unit tests for
+ * {@link org.springframework.web.reactive.result.view.groovy.GroovyMarkupViewResolverTests}.
+ *
  * @author Jason Yu
  */
 public class GroovyMarkupViewResolverTests {
+
+	@Test
+	public void viewClass() throws Exception {
+		GroovyMarkupViewResolver resolver = new GroovyMarkupViewResolver();
+		assertEquals(GroovyMarkupView.class, resolver.requiredViewClass());
+		DirectFieldAccessor viewAccessor = new DirectFieldAccessor(resolver);
+		Class viewClass = (Class) viewAccessor.getPropertyValue("viewClass");
+		assertEquals(GroovyMarkupView.class, viewClass);
+	}
 }

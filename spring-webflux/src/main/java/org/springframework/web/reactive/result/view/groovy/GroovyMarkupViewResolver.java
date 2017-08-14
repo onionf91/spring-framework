@@ -16,10 +16,27 @@
 
 package org.springframework.web.reactive.result.view.groovy;
 
+import org.springframework.web.reactive.result.view.UrlBasedViewResolver;
+
 /**
  *
  * @author Jason Yu
  * @since 5.0
  */
-public class GroovyMarkupViewResolver {
+public class GroovyMarkupViewResolver extends UrlBasedViewResolver {
+
+	GroovyMarkupViewResolver() {
+		setViewClass(requiredViewClass());
+	}
+
+	public GroovyMarkupViewResolver(String prefix, String suffix) {
+		setViewClass(requiredViewClass());
+		setPrefix(prefix);
+		setSuffix(suffix);
+	}
+
+	@Override
+	protected Class<?> requiredViewClass() {
+		return GroovyMarkupView.class;
+	}
 }

@@ -92,7 +92,10 @@ public class ViewResolverRegistry {
 	 */
 	public UrlBasedViewResolverRegistration groovyMarkup() {
 		if (!checkBeanOfType(GroovyMarkupConfigurer.class)) {
-			throw new BeanInitializationException("");
+			throw new BeanInitializationException("In addition to a GroovyMarker view resolver " +
+					"there must also be a single GroovyMarkupConfig bean in this web application context " +
+					"(or its parent): GroovyMarkupConfigurer is the usual implementation. " +
+					"This bean may be given any name.");
 		}
 		GroovyMarkupRegistration registration = new GroovyMarkupRegistration();
 		UrlBasedViewResolver resolver = registration.getViewResolver();

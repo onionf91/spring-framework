@@ -17,6 +17,8 @@
 package org.springframework.web.reactive.result.view.groovy;
 
 import java.io.Reader;
+import java.util.Locale;
+
 import groovy.text.Template;
 import groovy.text.TemplateEngine;
 import groovy.text.markup.MarkupTemplateEngine;
@@ -28,6 +30,9 @@ import org.junit.rules.ExpectedException;
 
 import org.springframework.beans.DirectFieldAccessor;
 import org.springframework.context.ApplicationContextException;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.mock.http.server.reactive.test.MockServerHttpRequest;
 import org.springframework.mock.http.server.reactive.test.MockServerWebExchange;
@@ -40,7 +45,7 @@ import static org.junit.Assert.*;
  */
 public class GroovyMarkupViewTests {
 
-	private static final String RESOURCE_LOADER_PATH = "classpath*:org/springframework/web/reactive/result/view/groovy";
+	private static final String RESOURCE_LOADER_PATH = "classpath*:org/springframework/web/reactive/result/view/groovy/";
 
 	private final MockServerWebExchange exchange = MockServerHttpRequest.get("/path").toExchange();
 
@@ -85,6 +90,42 @@ public class GroovyMarkupViewTests {
 		assertEquals(TestTemplateEngine.class, engine.getClass());
 	}
 
+	@Test
+	public void checkResource() throws Exception {
+		GroovyMarkupView view = createViewWithUrl("test.tpl");
+		assertTrue(view.checkResourceExists(Locale.US));
+	}
+
+	@Test
+	public void checkMissingResource() throws Exception {
+		GroovyMarkupView view = createViewWithUrl("missing.tpl");
+		assertFalse(view.checkResourceExists(Locale.US));
+	}
+
+	@Test
+	public void checkI18nResource() throws Exception {
+		GroovyMarkupView view = createViewWithUrl("i18n.tpl");
+		assertTrue(view.checkResourceExists(Locale.FRENCH));
+	}
+
+	@Test
+	public void checkI18nResourceMissingLocale() throws Exception {
+		GroovyMarkupView view = createViewWithUrl("i18n.tpl");
+		assertTrue(view.checkResourceExists(Locale.CHINESE));
+	}
+
+	private GroovyMarkupView createViewWithUrl(String viewUrl) throws Exception {
+		AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+		ctx.register(GroovyMarkupConfiguration.class);
+		ctx.refresh();
+
+		GroovyMarkupView view = new GroovyMarkupView();
+		view.setUrl(viewUrl);
+		view.setApplicationContext(ctx);
+		view.afterPropertiesSet();
+		return view;
+	}
+
 	public class TestTemplateEngine extends MarkupTemplateEngine {
 
 		public TestTemplateEngine() {
@@ -94,6 +135,17 @@ public class GroovyMarkupViewTests {
 		@Override
 		public Template createTemplate(Reader reader) {
 			return null;
+		}
+	}
+
+	@Configuration
+	static class GroovyMarkupConfiguration {
+
+		@Bean
+		public GroovyMarkupConfig groovyMarkupConfigurer() {
+			GroovyMarkupConfigurer configurer = new GroovyMarkupConfigurer();
+			configurer.setResourceLoaderPath(RESOURCE_LOADER_PATH);
+			return configurer;
 		}
 	}
 }

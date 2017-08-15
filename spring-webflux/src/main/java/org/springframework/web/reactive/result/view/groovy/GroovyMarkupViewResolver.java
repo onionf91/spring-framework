@@ -25,7 +25,7 @@ import org.springframework.web.reactive.result.view.UrlBasedViewResolver;
  */
 public class GroovyMarkupViewResolver extends UrlBasedViewResolver {
 
-	GroovyMarkupViewResolver() {
+	public GroovyMarkupViewResolver() {
 		setViewClass(requiredViewClass());
 	}
 

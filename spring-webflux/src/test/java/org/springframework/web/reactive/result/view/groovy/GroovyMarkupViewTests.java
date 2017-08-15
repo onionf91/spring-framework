@@ -39,8 +39,10 @@ import org.springframework.context.ApplicationContextException;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.http.HttpHeaders;
 import org.springframework.mock.http.server.reactive.test.MockServerHttpRequest;
 import org.springframework.mock.http.server.reactive.test.MockServerWebExchange;
 import reactor.test.StepVerifier;
@@ -177,6 +179,7 @@ public class GroovyMarkupViewTests {
 		GroovyMarkupView view = createViewWithUrl(viewUrl);
 		MockServerWebExchange exchange = MockServerHttpRequest.get("/path")
 				.acceptLanguageAsLocales(locale).toExchange();
+		LocaleContextHolder.setLocale(locale);
 		view.render(model, null, exchange).block(Duration.ofSeconds(5));
 		return exchange;
 	}

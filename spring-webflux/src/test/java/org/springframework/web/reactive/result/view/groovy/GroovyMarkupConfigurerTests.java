@@ -64,7 +64,7 @@ public class GroovyMarkupConfigurerTests {
 		this.configurer.setApplicationContext(this.applicationContext);
 		this.configurer.afterPropertiesSet();
 
-		TemplateEngine  engine = this.configurer.getTemplateEngine();
+		TemplateEngine engine = this.configurer.getTemplateEngine();
 		assertNotNull(engine);
 		assertEquals(MarkupTemplateEngine.class, engine.getClass());
 

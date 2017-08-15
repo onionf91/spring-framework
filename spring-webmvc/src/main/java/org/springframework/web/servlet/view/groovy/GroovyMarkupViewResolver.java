@@ -21,7 +21,7 @@ import java.util.Locale;
 import org.springframework.web.servlet.view.AbstractTemplateViewResolver;
 
 /**
- * Convenience subclass of @link AbstractTemplateViewResolver} that supports
+ * Convenience subclass of {@link AbstractTemplateViewResolver} that supports
  * {@link GroovyMarkupView} (i.e. Groovy XML/XHTML markup templates) and
  * custom subclasses of it.
  *

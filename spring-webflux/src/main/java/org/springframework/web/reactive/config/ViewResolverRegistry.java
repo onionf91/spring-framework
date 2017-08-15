@@ -44,6 +44,7 @@ import org.springframework.web.reactive.result.view.groovy.GroovyMarkupViewResol
  * JSON, XML, etc.
  *
  * @author Rossen Stoyanchev
+ * @author Jason Yu
  * @since 5.0
  */
 public class ViewResolverRegistry {

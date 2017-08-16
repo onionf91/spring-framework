@@ -53,7 +53,7 @@ public class GroovyMarkupConfigurerTests {
 	private GroovyMarkupConfigurer configurer;
 
 	@Before
-	public void setup() throws Exception {
+	public void setUp() throws Exception {
 		this.applicationContext = new StaticApplicationContext();
 		this.configurer = new GroovyMarkupConfigurer();
 		this.configurer.setResourceLoaderPath(RESOURCE_LOADER_PATH);
@@ -134,37 +134,37 @@ public class GroovyMarkupConfigurerTests {
 	@Test
 	public void resolveSampleTemplate() throws Exception {
 		URL url = this.configurer.resolveTemplate(getClass().getClassLoader(), TEMPLATE_PREFIX + "test.tpl");
-		Assert.assertNotNull(url);
+		assertNotNull(url);
 	}
 
 	@Test
 	public void resolveI18nFullLocale() throws Exception {
 		LocaleContextHolder.setLocale(Locale.GERMANY);
 		URL url = this.configurer.resolveTemplate(getClass().getClassLoader(), TEMPLATE_PREFIX + "i18n.tpl");
-		Assert.assertNotNull(url);
-		Assert.assertThat(url.getPath(), Matchers.containsString("i18n_de_DE.tpl"));
+		assertNotNull(url);
+		assertThat(url.getPath(), Matchers.containsString("i18n_de_DE.tpl"));
 	}
 
 	@Test
 	public void resolveI18nPartialLocale() throws Exception {
 		LocaleContextHolder.setLocale(Locale.FRANCE);
 		URL url = this.configurer.resolveTemplate(getClass().getClassLoader(), TEMPLATE_PREFIX + "i18n.tpl");
-		Assert.assertNotNull(url);
-		Assert.assertThat(url.getPath(), Matchers.containsString("i18n_fr.tpl"));
+		assertNotNull(url);
+		assertThat(url.getPath(), Matchers.containsString("i18n_fr.tpl"));
 	}
 
 	@Test
 	public void resolveI18nDefaultLocale() throws Exception {
 		LocaleContextHolder.setLocale(Locale.US);
 		URL url = this.configurer.resolveTemplate(getClass().getClassLoader(), TEMPLATE_PREFIX + "i18n.tpl");
-		Assert.assertNotNull(url);
-		Assert.assertThat(url.getPath(), Matchers.containsString("i18n.tpl"));
+		assertNotNull(url);
+		assertThat(url.getPath(), Matchers.containsString("i18n.tpl"));
 	}
 
 	@Test(expected = IOException.class)
 	public void failMissingTemplate() throws Exception {
 		LocaleContextHolder.setLocale(Locale.US);
 		this.configurer.resolveTemplate(getClass().getClassLoader(), TEMPLATE_PREFIX + "missing.tpl");
-		Assert.fail();
+		fail();
 	}
 }

@@ -58,7 +58,7 @@ import org.springframework.web.server.ServerWebExchange;
 public class GroovyMarkupView extends AbstractUrlBasedView {
 
 	@Nullable
-	MarkupTemplateEngine engine;
+	private MarkupTemplateEngine engine;
 
 	/**
 	 * Set the MarkupTemplateEngine to use in this view.

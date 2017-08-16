@@ -42,7 +42,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.http.HttpHeaders;
 import org.springframework.mock.http.server.reactive.test.MockServerHttpRequest;
 import org.springframework.mock.http.server.reactive.test.MockServerWebExchange;
 import reactor.test.StepVerifier;
@@ -63,7 +62,7 @@ public class GroovyMarkupViewTests {
 	public final ExpectedException exception = ExpectedException.none();
 
 	@Before
-	public void setup() throws Exception {
+	public void setUp() throws Exception {
 		this.context = new GenericApplicationContext();
 		this.context.refresh();
 	}
@@ -78,6 +77,7 @@ public class GroovyMarkupViewTests {
 		view.setApplicationContext(this.context);
 		view.setUrl("sampleView");
 		view.afterPropertiesSet();
+		fail();
 	}
 
 	@Test

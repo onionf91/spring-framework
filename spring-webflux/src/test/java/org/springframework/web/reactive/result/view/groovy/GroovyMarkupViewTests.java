@@ -44,7 +44,6 @@ import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.mock.http.server.reactive.test.MockServerHttpRequest;
 import org.springframework.mock.http.server.reactive.test.MockServerWebExchange;
-import reactor.test.StepVerifier;
 
 import static org.junit.Assert.*;
 
@@ -121,10 +120,8 @@ public class GroovyMarkupViewTests {
 		Map<String, Object> model = new HashMap<>();
 		model.put("name", "Spring");
 		MockServerWebExchange exchange = renderViewWithModel("test.tpl", model, Locale.US);
-		StepVerifier.create(exchange.getResponse().getBody())
-				.consumeNextWith( buf -> assertThat(asString(buf), Matchers.containsString("<h1>Hello Spring</h1>")))
-				.expectComplete()
-				.verify();
+		DataBuffer buf = exchange.getResponse().getBody().blockFirst();
+		assertThat(asString(buf), Matchers.containsString("<h1>Hello Spring</h1>"));
 	}
 
 	@Test
@@ -132,34 +129,25 @@ public class GroovyMarkupViewTests {
 		Map<String, Object> model = new HashMap<>();
 		model.put("name", "Spring");
 		MockServerWebExchange exchange = renderViewWithModel("i18n.tpl", model, Locale.FRANCE);
-		StepVerifier.create(exchange.getResponse().getBody())
-				.consumeNextWith( buf -> assertEquals("<p>Bonjour Spring</p>", asString(buf)))
-				.expectComplete()
-				.verify();
+		DataBuffer buf = exchange.getResponse().getBody().blockFirst();
+		assertEquals("<p>Bonjour Spring</p>", asString(buf));
 
 		exchange = renderViewWithModel("i18n.tpl", model, Locale.GERMANY);
-		StepVerifier.create(exchange.getResponse().getBody())
-				.consumeNextWith( buf -> assertEquals("<p>Include German</p><p>Hallo Spring</p>", asString(buf)))
-				.expectComplete()
-				.verify();
+		buf = exchange.getResponse().getBody().blockFirst();
+		assertEquals("<p>Include German</p><p>Hallo Spring</p>", asString(buf));
 
 		exchange = renderViewWithModel("i18n.tpl", model, new Locale("es"));
-		StepVerifier.create(exchange.getResponse().getBody())
-				.consumeNextWith( buf -> assertEquals("<p>Include Default</p><p>Hola Spring</p>", asString(buf)))
-				.expectComplete()
-				.verify();
+		buf = exchange.getResponse().getBody().blockFirst();
+		assertEquals("<p>Include Default</p><p>Hola Spring</p>", asString(buf));
 	}
 
 	@Test
 	public void renderLayoutTemplate() throws Exception {
 		Map<String, Object> model = new HashMap<>();
 		MockServerWebExchange exchange = renderViewWithModel("content.tpl", model, Locale.US);
-		StepVerifier.create(exchange.getResponse().getBody())
-				.consumeNextWith( buf -> assertEquals(
-						"<html><head><title>Layout example</title></head><body><p>This is the body</p></body></html>",
-						asString(buf)))
-				.expectComplete()
-				.verify();
+		DataBuffer buf = exchange.getResponse().getBody().blockFirst();
+		assertEquals("<html><head><title>Layout example</title></head><body><p>This is the body</p></body></html>",
+					 asString(buf));
 	}
 
 	private GroovyMarkupView createViewWithUrl(String viewUrl) throws Exception {

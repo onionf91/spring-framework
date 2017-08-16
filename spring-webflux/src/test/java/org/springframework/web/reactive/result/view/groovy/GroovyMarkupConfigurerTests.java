@@ -19,7 +19,6 @@ package org.springframework.web.reactive.result.view.groovy;
 import groovy.text.markup.MarkupTemplateEngine;
 import groovy.text.markup.TemplateConfiguration;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import java.io.IOException;

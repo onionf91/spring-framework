@@ -44,19 +44,37 @@ import org.springframework.web.reactive.result.view.AbstractUrlBasedView;
 import org.springframework.web.server.ServerWebExchange;
 
 /**
+ * An {@link AbstractUrlBasedView} subclass based on Groovy XML/XHTML markup templates.
+ *
+ * <p>Spring's Groovy Markup Template support requires Groovy 2.3.1 and higher.
  *
  * @author Jason Yu
  * @since 5.0
+ * @see GroovyMarkupViewResolver
+ * @see GroovyMarkupConfigurer
+ * @see <a href="http://groovy-lang.org/templating.html#_the_markuptemplateengine">
+ * Groovy Markup Template engine documentation</a>
  */
 public class GroovyMarkupView extends AbstractUrlBasedView {
 
 	@Nullable
 	MarkupTemplateEngine engine;
 
+	/**
+	 * Set the MarkupTemplateEngine to use in this view.
+	 * <p>If not set, the engine is auto-detected by looking up a single
+	 * {@link GroovyMarkupConfig} bean in the web application context and using
+	 * it to obtain the configured {@code MarkupTemplateEngine} instance.
+	 * @see GroovyMarkupConfig
+	 */
 	public void setTemplateEngine(MarkupTemplateEngine templateEngine) {
 		this.engine = templateEngine;
 	}
 
+	/**
+	 * Autodetect a MarkupTemplateEngine via the ApplicationContext.
+	 * Called if a MarkupTemplateEngine has not been manually configured.
+	 */
 	protected MarkupTemplateEngine autodetectMarkupTemplateEngine() throws BeansException {
 		try {
 			return BeanFactoryUtils
@@ -72,6 +90,14 @@ public class GroovyMarkupView extends AbstractUrlBasedView {
 		}
 	}
 
+	/**
+	 * Invoked at startup.
+	 * If no {@link #setTemplateEngine(MarkupTemplateEngine) templateEngine} has
+	 * been manually set, this method looks up a {@link GroovyMarkupConfig} bean
+	 * by type and uses it to obtain the Groovy Markup template engine.
+	 * @see GroovyMarkupConfig
+	 * @see #setTemplateEngine(groovy.text.markup.MarkupTemplateEngine)
+	 */
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		super.afterPropertiesSet();
@@ -125,6 +151,10 @@ public class GroovyMarkupView extends AbstractUrlBasedView {
 		return exchange.getResponse().writeWith(Flux.just(dataBuffer));
 	}
 
+	/**
+	 * Transform {@code MediaType} to {@code Charset}. If {@code MediaType} is null, then get
+	 * default charset from {@code AbstractView} class.
+	 */
 	private Charset getCharset(@Nullable MediaType mediaType) {
 		return Optional.ofNullable(mediaType).map(MimeType::getCharset).orElse(getDefaultCharset());
 	}
